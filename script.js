@@ -1,4 +1,3 @@
-/* script.js */
 const taskInput = document.getElementById('taskInput');
 const dateInput = document.getElementById('dateInput');
 const addButton = document.getElementById('addButton');
@@ -7,62 +6,67 @@ const taskList = document.getElementById('taskList');
 addButton.addEventListener('click', addTask);
 
 function updateTaskNumbers() {
-  const listItems = taskList.querySelectorAll('li');
-  listItems.forEach((li, index) => {
-    const taskDiv = li.firstChild;
-    taskDiv.textContent = `${index + 1}. ${taskDiv.textContent.replace(/^\d+\.\s*/, '')}`;
-  });
+    taskList.querySelectorAll('li').forEach((li, index) => {
+        li.querySelector('.task-text').textContent = `${index + 1}. ${li.dataset.text}`;
+    });
 }
 
 function addTask() {
-  const taskText = taskInput.value;
-  const completionDate = dateInput.value;
+    const taskText = taskInput.value.trim();
+    const completionDate = dateInput.value;
 
-  if (taskText && completionDate) {
+    if (!taskText || !completionDate) return alert("Enter both task and date.");
+
     const li = document.createElement('li');
-
+    li.dataset.text = taskText;
     li.innerHTML = `
-      <div> ${taskText}</div>
-      <div>Completion Date: ${completionDate}</div>
-      <div><button>Edit</button><button>Delete</button></div>
+        <div class="task-text">${taskText}</div>
+        <div class="date-text">Completion Date: ${completionDate}</div>
+        <button class="edit-btn">Edit</button>
+        <button class="delete-btn">Delete</button>
     `;
     taskList.appendChild(li);
-    taskInput.value = '';
-    dateInput.value = '';
+    taskInput.value = dateInput.value = '';
     updateTaskNumbers();
 
-    const editButton = li.querySelector('button');
-    const deleteButton = li.querySelector('button:last-child');
-    const taskDiv = li.firstChild;
-    const dateDiv = taskDiv.nextElementSibling;
+    li.querySelector('.edit-btn').onclick = () => editTask(li);
+    li.querySelector('.delete-btn').onclick = () => confirmDelete(li);
+}
 
-    editButton.onclick = () => {
-      const input = document.createElement('input');
-      input.value = taskDiv.textContent.replace(/^\d+\.\s*/, '');
-      li.replaceChild(input, taskDiv);
-      input.focus();
-      input.onblur = input.onkeydown = (e) => {
-        if (e.type === 'blur' || e.key === 'Enter') {
-          taskDiv.textContent = `${taskDiv.textContent.match(/^\d+\.\s*/)[0]}${input.value}`;
-          li.replaceChild(taskDiv, input);
-        }
-      };
-      const dateInputEdit = document.createElement('input');
-      dateInputEdit.type = 'date';
-      dateInputEdit.value = dateDiv.textContent.replace("Completion Date: ", "");
-      li.replaceChild(dateInputEdit, dateDiv);
-      dateInputEdit.onblur = () => {
+function editTask(li) {
+    const taskDiv = li.querySelector('.task-text');
+    let dateDiv = li.querySelector('.date-text');
+
+    const taskInputEdit = document.createElement('input');
+    taskInputEdit.value = li.dataset.text;
+    taskDiv.replaceWith(taskInputEdit);
+    taskInputEdit.focus();
+
+    const dateInputEdit = document.createElement('input');
+    dateInputEdit.type = 'date';
+    dateInputEdit.value = dateDiv.textContent.split(": ")[1];
+    dateDiv.replaceWith(dateInputEdit);
+
+    taskInputEdit.onblur = () => {
+        li.dataset.text = taskInputEdit.value.trim();
+        taskDiv.textContent = li.dataset.text;
+        taskInputEdit.replaceWith(taskDiv);
+        updateTaskNumbers();
+    };
+
+    dateInputEdit.onblur = () => {
         dateDiv.textContent = `Completion Date: ${dateInputEdit.value}`;
-        li.replaceChild(dateDiv, dateInputEdit);
-      };
+        dateInputEdit.replaceWith(dateDiv);
+    }
+}
 
-    };
+function confirmDelete(li) {
+    const confirmButton = document.createElement('button');
+    confirmButton.textContent = "OK";
+    li.appendChild(confirmButton);
 
-    deleteButton.onclick = () => {
-      li.remove();
-      updateTaskNumbers();
+    confirmButton.onclick = () => {
+        li.remove();
+        updateTaskNumbers();
     };
-  } else {
-    alert("Please enter both task and completion date.");
-  }
 }
