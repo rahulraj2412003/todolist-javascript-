@@ -4,14 +4,14 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh; /* changed height to min-height */
+    min-height: 100vh; 
     margin: 0;
     background-color: #f4f4f4;
 }
 
 .container {
-    max-width: 600px; /* Added max-width */
-    width: 90%; /* added width to make it responsive */
+    max-width: 600px; 
+    width: 90%; 
     background-color: white;
     padding: 20px;
     border-radius: 8px;
@@ -24,13 +24,13 @@ body {
 }
 
 input[type="text"],
-input[type="date"] { /* added input type date */
+input[type="date"] { 
     flex-grow: 1;
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    margin-right: 5px; /* added margin to date input */
-    max-width: 60%; /* added max width to inputs */
+    margin-right: 5px; 
+    max-width: 60%; 
 }
 
 button {
@@ -53,7 +53,7 @@ li {
     align-items: center;
     padding: 8px;
     border-bottom: 1px solid #eee;
-    word-break: break-word; /* added to prevent long words from breaking the layout */
+    word-break: break-word; 
 }
 
 .li-content {
